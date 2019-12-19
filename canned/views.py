@@ -11,7 +11,7 @@ query = "*:*"
 
 def index(request):
     # return HttpResponse('Hi bro!')
-    return render(request, 'canned/index.html', {'answer': get_solr_response(query)} )
+    return render(request, 'canned/index.html', {'answer': 'Hi bro!!!'} )
 
 def get_solr_response(query):
     res = requests.get(URL.format(query), verify=False)

@@ -13,12 +13,7 @@
 	<link rel="stylesheet" media="all" href="{% static 'canned/says.css' %}">
 	<link rel="stylesheet" media="all" href="{% static 'canned/reply.css' %}">
 	<link rel="stylesheet" media="all" href="{% static 'canned/typing.css' %}">
-    <link rel="stylesheet" media="all" href="{% static 'canned/input.css' %}">
-    <!-- <link rel="stylesheet" media="all" href="./component/styles/setup.css">
-	<link rel="stylesheet" media="all" href="./component/styles/says.css">
-	<link rel="stylesheet" media="all" href="./component/styles/reply.css">
-	<link rel="stylesheet" media="all" href="./component/styles/typing.css">
-	<link rel="stylesheet" media="all" href="./component/styles/input.css"> -->
+  <link rel="stylesheet" media="all" href="{% static 'canned/input.css' %}">
 	<style>
 	body {
 		background: #dcdde0;
@@ -55,16 +50,10 @@ var chatWindow = new Bubbles(document.getElementById("chat"), "chatWindow", {
     // add error conversation block & recall it if no answer matched
     var miss = function() {
       chatWindow.talk(
-        {
-          "i-dont-get-it": {
-            says: [
-              "Sorry, I don't get it 😕. Pls repeat? Or you can just click below 👇"
-            ],
-            reply: o.convo[o.standingAnswer].reply
-          }
-        },
-        "i-dont-get-it"
+        o.convo,
+        'awkward'
       )
+      console.log(o.input)
     }
 
     // do this if answer found
@@ -79,14 +68,17 @@ var chatWindow = new Bubbles(document.getElementById("chat"), "chatWindow", {
       return text.toLowerCase().replace(/[\s.,\/#!$%\^&\*;:{}=\-_'"`~()]/g, "")
     }
 
-    // search function
-    var found = false
-    o.convo[o.standingAnswer].reply.forEach(function(e, i) {
-      strip(e.question).includes(strip(o.input)) && o.input.length > 0
-        ? (found = e.answer)
-        : found ? null : (found = false)
-    })
-    found ? match(found) : miss()
+    var response = function() {
+      chatWindow.talk(
+        {
+          res: {
+            says: [ "{{ answer }}",]
+          }
+        },
+        "res"
+      )
+    }
+    response()
   }
 }) // done setting up chat-bubble
 
@@ -94,39 +86,19 @@ var chatWindow = new Bubbles(document.getElementById("chat"), "chatWindow", {
 // "Basic chat-bubble Example" (1-basics.html)
 var convo = {
   ice: {
-    says: ["Hi", "Would you like banana or ice cream?"],
-    reply: [
-      {
-        question: "Banana",
-        answer: "banana"
-      },
-      {
-        question: "Ice Cream",
-        answer: "ice-cream"
-      }
-    ]
+    says: ["Hi", "Glad to meet you!"],
   },
-  banana: {
-    says: ["🍌"],
-    reply: [
-      {
-        question: "Start Over",
-        answer: "ice"
-      }
-    ]
-  },
-  "ice-cream": {
-    says: ["🍦"],
-    reply: [
-      {
-        question: "Start Over",
-        answer: "ice"
-      }
-    ]
+  awkward: {
+    says: ["Sorry, I don't know how to answer."]
   }
 }
 
 // pass JSON to your function and you're done!
 chatWindow.talk(convo)
 </script>
+<form method="post">
+  {% csrf_token %}
+  <textarea name="my_textarea"></textarea>
+</form>
+
 </body>
